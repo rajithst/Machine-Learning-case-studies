@@ -19,10 +19,10 @@ cancer = load_breast_cancer()
 df_cancer = pd.DataFrame(np.c_[cancer['data'],cancer['target']],columns=np.append(cancer['feature_names'],['target']))
 
 
-sns.pairplot(df_cancer,hue='target',vars=['mean radius','mean texture','mean area','mean perimeter','mean smoothness'])
-sns.countplot(df_cancer['target'])
-sns.scatterplot(x="mean area",y="mean smoothness" , hue='target',data=df_cancer)
-sns.heatmap(df_cancer.corr(),annot=True)
+#sns.pairplot(df_cancer,hue='target',vars=['mean radius','mean texture','mean area','mean perimeter','mean smoothness'])
+#sns.countplot(df_cancer['target'])
+#sns.scatterplot(x="mean area",y="mean smoothness" , hue='target',data=df_cancer)
+#sns.heatmap(df_cancer.corr(),annot=True)
 
 #training the model
 X = df_cancer.drop(['target'],axis=1)
@@ -80,7 +80,18 @@ sns.heatmap(cm,annot=True)
 
 print(classification_report(y_test,y_pred))
 
+#grid search
+from sklearn.model_selection import GridSearchCV
 
+param_grid = { 'C':[0.1,1,10,100], 'gamma':[1,0.1,0.01,0.001],'kernel':['rbf']}
+grid = GridSearchCV(SVC(),param_grid,cv=3)
+grid.fit(X_train_scaled,y_train)
+
+grid.best_params_
+grid_predictions = grid.predict(X_test_scaled)
+
+cm = confusion_matrix(y_test,grid_predictions)
+sns.heatmap(cm,annot=True)
 
 
 
